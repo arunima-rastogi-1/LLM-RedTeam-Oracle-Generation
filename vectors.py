@@ -5,7 +5,7 @@ import base64
 from langchain_community.document_loaders import UnstructuredPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceBgeEmbeddings
-from langchain_community.vectorstores import Qdrant
+from langchain_qdrant import QdrantVectorStore
 
 class EmbeddingsManager:
     def __init__(
@@ -13,7 +13,7 @@ class EmbeddingsManager:
         model_name: str = "BAAI/bge-small-en",
         device: str = "cpu",
         encode_kwargs: dict = {"normalize_embeddings": True},
-        qdrant_url: str = "http://localhost:6333",
+        qdrant_path: str = "./qdrant_local_db",
         collection_name: str = "vector_db",
     ):
         """
@@ -23,13 +23,13 @@ class EmbeddingsManager:
             model_name (str): The HuggingFace model name for embeddings.
             device (str): The device to run the model on ('cpu' or 'cuda').
             encode_kwargs (dict): Additional keyword arguments for encoding.
-            qdrant_url (str): The URL for the Qdrant instance.
+            qdrant_path (str): Local on-disk path for embedded Qdrant storage (no server/Docker needed).
             collection_name (str): The name of the Qdrant collection.
         """
         self.model_name = model_name
         self.device = device
         self.encode_kwargs = encode_kwargs
-        self.qdrant_url = qdrant_url
+        self.qdrant_path = qdrant_path
         self.collection_name = collection_name
 
         self.embeddings = HuggingFaceBgeEmbeddings(
@@ -66,11 +66,10 @@ class EmbeddingsManager:
 
         # Create and store embeddings in Qdrant
         try:
-            qdrant = Qdrant.from_documents(
+            qdrant = QdrantVectorStore.from_documents(
                 splits,
                 self.embeddings,
-                url=self.qdrant_url,
-                prefer_grpc=False,
+                path=self.qdrant_path,
                 collection_name=self.collection_name,
             )
         except Exception as e:

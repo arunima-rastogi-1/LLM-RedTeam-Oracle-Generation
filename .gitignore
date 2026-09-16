@@ -169,3 +169,10 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Project-specific: regeneratable embedded vector store, not evidence,
+# just a local cache rebuilt from nimbus_knowledge_base.pdf on each run.
+qdrant_local_db/
+
+# Leftover scratch file from manual Streamlit UI testing.
+temp.pdf

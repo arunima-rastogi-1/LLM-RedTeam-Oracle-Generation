@@ -38,8 +38,8 @@ st.set_page_config(
 
 # Sidebar
 with st.sidebar:
-    # You can replace the URL below with your own logo URL or local image path
-    st.image("logo.png", use_column_width=True)
+    # Note: original repo referenced a logo.png that isn't actually committed
+    # in the repo, so it's dropped here rather than pointed at a missing file.
     st.markdown("### 📚 Your Personal Document Assistant")
     st.markdown("---")
     
@@ -101,12 +101,26 @@ elif choice == "🤖 Chatbot":
                 st.warning("⚠️ Please upload a PDF first.")
             else:
                 try:
+                    # Qdrant's embedded/local mode only allows one open
+                    # connection to the storage folder at a time. If a
+                    # previous ChatbotManager (from an earlier upload) is
+                    # still holding it open, release it before creating a
+                    # fresh embeddings client, otherwise this fails with
+                    # "Storage folder is already accessed by another instance".
+                    if st.session_state['chatbot_manager'] is not None:
+                        try:
+                            st.session_state['chatbot_manager'].client.close()
+                        except Exception:
+                            pass
+                        st.session_state['chatbot_manager'] = None
+                        st.session_state['messages'] = []
+
                     # Initialize the EmbeddingsManager
                     embeddings_manager = EmbeddingsManager(
                         model_name="BAAI/bge-small-en",
                         device="cpu",
                         encode_kwargs={"normalize_embeddings": True},
-                        qdrant_url="http://localhost:6333",
+                        qdrant_path="./qdrant_local_db",
                         collection_name="vector_db"
                     )
                     
@@ -124,7 +138,7 @@ elif choice == "🤖 Chatbot":
                             encode_kwargs={"normalize_embeddings": True},
                             llm_model="llama3.2:3b",
                             llm_temperature=0.7,
-                            qdrant_url="http://localhost:6333",
+                            qdrant_path="./qdrant_local_db",
                             collection_name="vector_db"
                         )
                     
