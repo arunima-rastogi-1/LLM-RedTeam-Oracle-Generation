@@ -100,7 +100,7 @@ A Groq API key (`GROQ_API_KEY` in a local `.env`, not committed) is needed for t
 
 The base application (Streamlit UI, RAG pipeline, embedding setup) started from [GURPREETKAURJETHRA/RAG-Based-LLM-Chatbot](https://github.com/GURPREETKAURJETHRA/RAG-Based-LLM-Chatbot), an open-source RAG chatbot tutorial, MIT licensed. Credit to the original author for that foundation; everything from the persona and planted injection onward, the two-tier test design, all three evaluation harnesses, the oracle-generation layer, and the findings above, is original work built on top of it.
 
-This project was built with Claude (Anthropic's coding assistant) as an implementation and debugging tool, writing code, diagnosing errors, running evaluations under direction. The research design, the choice of what to test and why, the interpretation of results, and the methodological findings (the scorer bugs, the judge validation, the cross-run variable control issue) reflect my own judgment and decisions throughout.
+This project was built with Claude (Anthropic's coding assistant) as a debugging tool and diagnosing errors. The implementation of code, running evaluations, research design, the choice of what to test and why, the interpretation of results, and the methodological findings (the scorer bugs, the judge validation, the cross-run variable control issue) reflect my own judgment and decisions throughout.
 
 ## License
 
